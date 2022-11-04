@@ -12,13 +12,14 @@ public class RotationHandler
     private bool hasTapped;
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(input))
         {
             hasTapped = true;
         }
     }
     public void FixedUpdate()
     {
+        Debug.Log($"Input {input} pressed: {Input.GetKey(input)}");
         if (Input.GetKey(input) || hasTapped)
         {
             transform.Rotate(direction);
@@ -31,7 +32,15 @@ public class RotationHandler
 public class Head : MonoBehaviour
 {
     public RotationHandler[] rotationHandlers;
-    private GameObject someGameObject;
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.TryGetComponent(out Pikachu pikachu))
+        {
+            //grow logic
+            pikachu.OnEaten();
+        }
+    }
 
     void Update()
     {
