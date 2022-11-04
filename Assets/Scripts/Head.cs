@@ -56,6 +56,9 @@ public class Head : MonoBehaviour
         {
             rotationHandlers[i].FixedUpdate();
         }
-        transform.position += transform.up;
+        Vector3 position = transform.position + transform.up;
+        position.x = (position.x + 13.5f) % 9 - 4.5f;
+        position.y = (position.y + 13.5f) % 9 - 4.5f;
+        transform.position = position;
     }
 }
