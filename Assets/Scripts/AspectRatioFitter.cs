@@ -7,16 +7,18 @@ using UnityEngine;
 [ExecuteAlways]
 public class AspectRatioFitter : MonoBehaviour
 {
+    [SerializeField] private GameField _gameField;
     void Update()
     {
+        Debug.Assert(_gameField.height == _gameField.width, "Error: Aspect Ratio Fitter only supports Square GameFields right now.");
         Camera camera = GetComponent<Camera>();
         if (IsInLandscapeMode())
         {
-            camera.orthographicSize = 4.5f;
+            camera.orthographicSize = _gameField.HalfHeight;
         }
         else
         {
-            camera.orthographicSize = 4.5f * Screen.height / Screen.width;
+            camera.orthographicSize = _gameField.HalfWidth * Screen.height / Screen.width;
         }
     }
 

@@ -32,14 +32,15 @@ public class RotationHandler
 public class Head : MonoBehaviour
 {
     public RotationHandler[] rotationHandlers;
+    [SerializeField] private GameField _gameField;
+    [SerializeField] private Body _bodyPrefab;
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void Start()
     {
-        if (col.TryGetComponent(out Pikachu pikachu))
-        {
-            //grow logic
-            pikachu.OnEaten();
-        }
+        Vector3 position = Vector3.zero;
+        position.x = _gameField.width / 2 - _gameField.HalfWidth + .5f;
+        position.y = _gameField.height / 2 - _gameField.HalfHeight + .5f;
+        transform.position = position;
     }
 
     void Update()
@@ -56,9 +57,22 @@ public class Head : MonoBehaviour
         {
             rotationHandlers[i].FixedUpdate();
         }
-        Vector3 position = transform.position + transform.up;
-        position.x = (position.x + 13.5f) % 9 - 4.5f;
-        position.y = (position.y + 13.5f) % 9 - 4.5f;
-        transform.position = position;
+        Vector3 nextPosition = transform.position + transform.up;
+        nextPosition.x = (nextPosition.x + 3 * _gameField.HalfWidth) % _gameField.width - _gameField.HalfWidth;
+        nextPosition.y = (nextPosition.y + 3 * _gameField.HalfHeight) % _gameField.height - _gameField.HalfHeight;
+
+        RaycastHit2D hit = Physics2D.BoxCast(nextPosition, Vector2.one * .9f, 0f, Vector2.zero);
+        Pikachu pikachu = hit.collider?.GetComponent<Pikachu>();
+        if (pikachu == null)
+        {
+            // no pikachu eaten, move body
+        }
+        else
+        {
+            Body newBody = Instantiate(_bodyPrefab, transform.position, transform.rotation);
+            pikachu.OnEaten();
+        }
+        
+        transform.position = nextPosition;
     }
 }
